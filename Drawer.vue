@@ -20,7 +20,7 @@ import { ref, defineProps, defineEmits, computed, watch, nextTick } from 'vue';
 const props = defineProps({
     modelValue: Boolean,
     height: { type: Number, default: 300 },
-    position: { type: String, default: 'top' },
+    position: { type: String, default: 'bottom' },
     title: { type: String, default: 'Drawer title' },
     description: { type: String, default: 'Drawer description' },
     marginLeft: { type: String, default: '' },
@@ -61,13 +61,14 @@ const drag = (event) => {
     const delta = currentY.value - startY.value;
 
     if (props.position === 'top') {
-        // Prevent over-dragging upwards (limit to the starting position, i.e., 0px)
-        translateY.value = Math.min(delta, 0); // Prevent dragging up beyond 0px
+        // Prevent dragging the bottom drawer above 1px
+        translateY.value = Math.min(delta, 1);
     } else {
-        // Allow dragging down normally
-        translateY.value = Math.min(delta, props.height);
+        // Prevent dragging the top drawer beyond -10px
+        translateY.value = Math.max(delta, -2);
     }
 };
+
 
 const stopDrag = () => {
     isDragging.value = false;
